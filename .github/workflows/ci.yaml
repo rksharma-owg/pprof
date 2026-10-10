@@ -1,11 +1,11 @@
-name: ci
+name: Contribution preflight
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-  schedule:
-    - cron: '0 2 * * *' # Run every day, at 2AM UTC.
+  workflow_dispatch:
+    inputs:
+      patch_sha:
+        description: Full contribution commit SHA to test
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -55,6 +55,14 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: ${{ env.WORKING_DIR }}
+          ref: ${{ inputs.patch_sha }}
+
+      - name: Verify contribution commit
+        shell: bash
+        run: |
+          actual=$(git -C "${{ env.WORKING_DIR }}" rev-parse HEAD)
+          test "$actual" = "${{ inputs.patch_sha }}"
+          echo "Tested commit: $actual" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Update Go version using setup-go
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
@@ -111,6 +119,14 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: ${{ env.WORKING_DIR }}
+          ref: ${{ inputs.patch_sha }}
+
+      - name: Verify contribution commit
+        shell: bash
+        run: |
+          actual=$(git -C "${{ env.WORKING_DIR }}" rev-parse HEAD)
+          test "$actual" = "${{ inputs.patch_sha }}"
+          echo "Tested commit: $actual" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Update Go version using setup-go
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
@@ -184,6 +200,14 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: ${{ env.WORKING_DIR }}
+          ref: ${{ inputs.patch_sha }}
+
+      - name: Verify contribution commit
+        shell: bash
+        run: |
+          actual=$(git -C "${{ env.WORKING_DIR }}" rev-parse HEAD)
+          test "$actual" = "${{ inputs.patch_sha }}"
+          echo "Tested commit: $actual" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Update Go version using setup-go
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
