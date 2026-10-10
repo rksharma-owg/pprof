@@ -77,6 +77,29 @@ func TestAddr2Liner(t *testing.T) {
 	a.rw.close()
 }
 
+func TestAddr2LinerReadFrame(t *testing.T) {
+	for _, tc := range []struct {
+		name, function, location string
+		want                     plugin.Frame
+	}{
+		{"gnu_unknown", "??", "??:?", plugin.Frame{}},
+		{"gnu_unknown_with_function", "grow", "??:?", plugin.Frame{Func: "grow"}},
+		{"legacy_unknown", "??", "??:0", plugin.Frame{}},
+		{"legacy_unknown_with_function", "grow", "??:0", plugin.Frame{Func: "grow"}},
+		{"known_location", "grow", "main.c:42", plugin.Frame{Func: "grow", File: "main.c", Line: 42}},
+		{"colon_in_filename", "grow", "dir:name/main.c:42", plugin.Frame{Func: "grow", File: "dir:name/main.c", Line: 42}},
+		{"discriminator", "grow", "main.c:42 (discriminator 1)", plugin.Frame{Func: "grow", File: "main.c", Line: 42}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			a := addr2Liner{rw: &mockAddr2liner{output: []string{tc.function, tc.location}}}
+			got, end := a.readFrame()
+			if end || got != tc.want {
+				t.Errorf("readFrame() = (%+v, %v), want (%+v, false)", got, end, tc.want)
+			}
+		})
+	}
+}
+
 type mockAddr2liner struct {
 	output []string
 }
