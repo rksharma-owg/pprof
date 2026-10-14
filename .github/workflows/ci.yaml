@@ -56,13 +56,16 @@ jobs:
         with:
           path: ${{ env.WORKING_DIR }}
           ref: ${{ inputs.patch_sha }}
+          persist-credentials: false
 
       - name: Verify contribution commit
         working-directory: ${{ github.workspace }}
         shell: bash
+        env:
+          EXPECTED_SHA: ${{ inputs.patch_sha }}
         run: |
-          actual=$(git -C "${{ env.WORKING_DIR }}" rev-parse HEAD)
-          test "$actual" = "${{ inputs.patch_sha }}"
+          actual=$(git -C "$WORKING_DIR" rev-parse HEAD)
+          test "$actual" = "$EXPECTED_SHA"
           echo "Tested commit: $actual" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Update Go version using setup-go
@@ -84,10 +87,10 @@ jobs:
           brew install graphviz
           # Do not let tools interfere with the main module's go.mod.
           cd && go mod init tools
-          go install honnef.co/go/tools/cmd/staticcheck@2026.2.1
+          go install honnef.co/go/tools/cmd/staticcheck@452d5bb86b45416c35891262f6a11dbd6a970117
           go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.14.0
           # Add PATH for installed tools.
-          echo "$GOPATH/bin:$PATH" >> $GITHUB_PATH
+          echo "$GOPATH/bin:$PATH" >> "$GITHUB_PATH"
 
       - name: Run the script
         run: |
@@ -121,13 +124,16 @@ jobs:
         with:
           path: ${{ env.WORKING_DIR }}
           ref: ${{ inputs.patch_sha }}
+          persist-credentials: false
 
       - name: Verify contribution commit
         working-directory: ${{ github.workspace }}
         shell: bash
+        env:
+          EXPECTED_SHA: ${{ inputs.patch_sha }}
         run: |
-          actual=$(git -C "${{ env.WORKING_DIR }}" rev-parse HEAD)
-          test "$actual" = "${{ inputs.patch_sha }}"
+          actual=$(git -C "$WORKING_DIR" rev-parse HEAD)
+          test "$actual" = "$EXPECTED_SHA"
           echo "Tested commit: $actual" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Update Go version using setup-go
@@ -166,10 +172,10 @@ jobs:
           sudo apt-get install graphviz
           # Do not let tools interfere with the main module's go.mod.
           cd && go mod init tools
-          go install honnef.co/go/tools/cmd/staticcheck@2026.2.1
+          go install honnef.co/go/tools/cmd/staticcheck@452d5bb86b45416c35891262f6a11dbd6a970117
           go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.14.0
           # Add PATH for installed tools.
-          echo "$GOPATH/bin:$PATH" >> $GITHUB_PATH
+          echo "$GOPATH/bin:$PATH" >> "$GITHUB_PATH"
 
       - name: Check llvm-symbolizer installation
         run: |
@@ -203,13 +209,16 @@ jobs:
         with:
           path: ${{ env.WORKING_DIR }}
           ref: ${{ inputs.patch_sha }}
+          persist-credentials: false
 
       - name: Verify contribution commit
         working-directory: ${{ github.workspace }}
         shell: bash
+        env:
+          EXPECTED_SHA: ${{ inputs.patch_sha }}
         run: |
-          actual=$(git -C "${{ env.WORKING_DIR }}" rev-parse HEAD)
-          test "$actual" = "${{ inputs.patch_sha }}"
+          actual=$(git -C "$WORKING_DIR" rev-parse HEAD)
+          test "$actual" = "$EXPECTED_SHA"
           echo "Tested commit: $actual" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Update Go version using setup-go
